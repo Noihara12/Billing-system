@@ -1,0 +1,41 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Palet Bagoes Cafe: oranye keemasan dari sayap logo, dipakai untuk aksi utama. */
+    --color-brand-50: #fff8ec;
+    --color-brand-100: #ffedcd;
+    --color-brand-200: #fcd89b;
+    --color-brand-300: #f9be5f;
+    --color-brand-400: #f5a11a;
+    --color-brand-500: #e8891a;
+    --color-brand-600: #c96a10;
+    --color-brand-700: #a2500f;
+    --color-brand-800: #7c3c12;
+    --color-brand-900: #5c2d11;
+    --color-brand-950: #2e1508;
+
+    /* Merah marun dari badge logo, untuk aksen sekunder. */
+    --color-maroon-400: #e0413f;
+    --color-maroon-500: #c1272d;
+    --color-maroon-600: #9e1b21;
+    --color-maroon-700: #7a1519;
+
+    /* Netral gelap hangat menggantikan abu-abu dingin bawaan Tailwind, mengikuti hitam kecoklatan logo. */
+    --color-slate-50: #f8f4ef;
+    --color-slate-100: #efe8e1;
+    --color-slate-200: #dfd5cc;
+    --color-slate-300: #c3b6ac;
+    --color-slate-400: #9a8b80;
+    --color-slate-500: #6b5e55;
+    --color-slate-600: #4e433c;
+    --color-slate-700: #3a312c;
+    --color-slate-800: #2a2320;
+    --color-slate-900: #1a1512;
+    --color-slate-950: #120e0c;
+}

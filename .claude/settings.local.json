@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell($f = 'AGENTS.md','database\\\\migrations\\\\2026_09_12_000004_create_units_table.php','database\\\\migrations\\\\2026_09_12_000007_create_price_lists_table.php','app\\\\Models\\\\Unit.php','app\\\\Models\\\\PriceList.php','app\\\\Services\\\\PriceCalculationService.php','app\\\\Http\\\\Controllers\\\\Admin\\\\PriceListController.php','app\\\\Http\\\\Controllers\\\\Admin\\\\UnitController.php','app\\\\Http\\\\Controllers\\\\Admin\\\\BillingController.php','app\\\\Http\\\\Requests\\\\Admin\\\\StorePriceListRequest.php','app\\\\Http\\\\Requests\\\\Admin\\\\UpdatePriceListRequest.php','app\\\\Http\\\\Requests\\\\Admin\\\\StoreUnitRequest.php','app\\\\Http\\\\Requests\\\\Admin\\\\UpdateUnitRequest.php'; foreach\\($f in $f\\){ \"===== $f\"; Get-Content $f -Raw })",
+      "PowerShell(composer require laravel/boost --dev --no-interaction 2>&1)",
+      "PowerShell($f = 'resources\\\\views\\\\admin\\\\price-lists\\\\index.blade.php','resources\\\\views\\\\admin\\\\price-lists\\\\_form.blade.php','resources\\\\views\\\\admin\\\\units\\\\index.blade.php','resources\\\\views\\\\admin\\\\units\\\\_form.blade.php','resources\\\\views\\\\admin\\\\billing\\\\create.blade.php','app\\\\Services\\\\RentalService.php','app\\\\Services\\\\BookingService.php','app\\\\Http\\\\Requests\\\\Admin\\\\StartWalkInRentalRequest.php','app\\\\Http\\\\Requests\\\\User\\\\StoreBookingRequest.php'; foreach\\($f in $f\\){ \"===== $f\"; Get-Content $f -Raw })",
+      "PowerShell(vendor\\\\bin\\\\pint --dirty --format agent)",
+      "PowerShell(php artisan test --compact 2>&1)",
+      "Bash(php artisan *)"
+    ]
+  }
+}
