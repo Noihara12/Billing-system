@@ -446,7 +446,167 @@ function initNavbarMenu() {
     });
 }
 
+// Bukti booking digambar sendiri di canvas (tanpa library) lalu diunduh sebagai PNG.
+const RECEIPT_STATUS_COLORS = {
+    PENDING: '#f5a11a',
+    CONFIRMED: '#f5a11a',
+    COMPLETED: '#34d399',
+    CANCELLED: '#fb7185',
+};
+
+function loadImage(src) {
+    return new Promise((resolve) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = () => resolve(null);
+        image.src = src;
+    });
+}
+
+function roundedRect(ctx, x, y, width, height, radius) {
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.arcTo(x + width, y, x + width, y + height, radius);
+    ctx.arcTo(x + width, y + height, x, y + height, radius);
+    ctx.arcTo(x, y + height, x, y, radius);
+    ctx.arcTo(x, y, x + width, y, radius);
+    ctx.closePath();
+}
+
+async function drawBookingReceipt(data) {
+    const width = 720;
+    // Tinggi mengikuti jumlah baris (dua kolom per baris) agar tidak ada ruang kosong di bawah.
+    const height = 330 + Math.ceil(data.rows.length / 2) * 86 + 164;
+    const scale = 2;
+    const canvas = document.createElement('canvas');
+    canvas.width = width * scale;
+    canvas.height = height * scale;
+
+    const ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+    ctx.textBaseline = 'alphabetic';
+
+    const font = (size, weight = '400') => `${weight} ${size}px "Instrument Sans", system-ui, sans-serif`;
+
+    ctx.fillStyle = '#120e0c';
+    ctx.fillRect(0, 0, width, height);
+
+    roundedRect(ctx, 28, 28, width - 56, height - 56, 28);
+    ctx.fillStyle = '#1a1512';
+    ctx.fill();
+    ctx.strokeStyle = '#3a312c';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    const logo = await loadImage(data.logo);
+    if (logo) {
+        ctx.save();
+        roundedRect(ctx, 64, 64, 72, 72, 16);
+        ctx.clip();
+        ctx.drawImage(logo, 64, 64, 72, 72);
+        ctx.restore();
+    }
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = font(26, '700');
+    ctx.fillText(data.place, 152, 96);
+    ctx.fillStyle = '#9a8b80';
+    ctx.font = font(16);
+    ctx.fillText('Bukti Booking', 152, 122);
+
+    ctx.strokeStyle = '#2a2320';
+    ctx.beginPath();
+    ctx.moveTo(64, 170);
+    ctx.lineTo(width - 64, 170);
+    ctx.stroke();
+
+    ctx.fillStyle = '#9a8b80';
+    ctx.font = font(14);
+    ctx.fillText('KODE BOOKING', 64, 212);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = font(44, '700');
+    ctx.fillText(data.code, 64, 262);
+
+    const statusColor = RECEIPT_STATUS_COLORS[data.status] || '#9a8b80';
+    ctx.font = font(16, '600');
+    const statusWidth = ctx.measureText(data.status).width + 36;
+    roundedRect(ctx, width - 64 - statusWidth, 188, statusWidth, 36, 18);
+    ctx.fillStyle = `${statusColor}26`;
+    ctx.fill();
+    ctx.strokeStyle = `${statusColor}66`;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = statusColor;
+    ctx.fillText(data.status, width - 64 - statusWidth + 18, 212);
+
+    let y = 330;
+    data.rows.forEach(([label, value], index) => {
+        const column = index % 2;
+        const x = column === 0 ? 64 : width / 2 + 8;
+
+        ctx.fillStyle = '#9a8b80';
+        ctx.font = font(15);
+        ctx.fillText(label, x, y);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = font(21, '600');
+        ctx.fillText(value, x, y + 30);
+
+        if (column === 1) y += 86;
+    });
+
+    if (data.rows.length % 2 === 1) y += 86;
+
+    ctx.strokeStyle = '#2a2320';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(64, y - 6);
+    ctx.lineTo(width - 64, y - 6);
+    ctx.stroke();
+
+    ctx.fillStyle = '#c3b6ac';
+    ctx.font = font(17);
+    ctx.fillText('Tunjukkan bukti ini ke operator saat datang.', 64, y + 36);
+    ctx.fillText('Datang 15 menit sebelum jam mulai.', 64, y + 64);
+
+    ctx.fillStyle = '#9a8b80';
+    ctx.font = font(16);
+    ctx.fillText(`Kontak: ${data.contact}`, 64, height - 72);
+
+    return canvas.toDataURL('image/png');
+}
+
+function initBookingReceipt() {
+    const button = document.querySelector('[data-receipt]');
+    if (!button) return;
+
+    button.addEventListener('click', async () => {
+        const original = button.textContent;
+        button.disabled = true;
+        button.textContent = 'Menyiapkan gambar...';
+
+        try {
+            if (document.fonts?.ready) await document.fonts.ready;
+
+            const data = JSON.parse(button.dataset.receipt);
+            const link = document.createElement('a');
+            link.href = await drawBookingReceipt(data);
+            link.download = `booking-${data.code}.png`;
+            link.click();
+        } catch (error) {
+            button.textContent = 'Gagal membuat gambar, coba lagi';
+            setTimeout(() => { button.textContent = original; }, 2500);
+            return;
+        } finally {
+            button.disabled = false;
+        }
+
+        button.textContent = original;
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    initBookingReceipt();
     initNavbarMenu();
     initPhoneInputs();
     initCountdowns();
