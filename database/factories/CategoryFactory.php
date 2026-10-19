@@ -18,7 +18,8 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => 'PS '.fake()->unique()->numberBetween(1, 9999),
+            // Awalan "Kategori" agar tidak pernah bentrok dengan PS 4 / PS 5 bawaan migration.
+            'name' => 'Kategori '.fake()->unique()->numberBetween(1, 9999),
             'description' => null,
             'sort_order' => 0,
         ];

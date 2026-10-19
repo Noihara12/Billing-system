@@ -58,6 +58,34 @@
                 @endif
             </dl>
 
+            @php
+                $receipt = [
+                    'code' => $booking->booking_code,
+                    'status' => $booking->status,
+                    'logo' => asset('images/logo-bagoes.jpg'),
+                    'place' => config('contact.name'),
+                    'contact' => config('contact.whatsapp_display'),
+                    'rows' => [
+                        ['Unit', $booking->unit->name.' ('.$booking->unit->unit_code.')'],
+                        ['Kategori', $booking->unit->category?->name ?? '-'],
+                        ['Tanggal', $booking->booking_date->translatedFormat('d M Y')],
+                        ['Jam', $booking->start_time->format('H:i').' - '.$booking->end_time->format('H:i')],
+                        ['Durasi', round($booking->duration_minutes / 60, 1).' Jam'],
+                        ['Total Harga', 'Rp '.number_format($booking->total_price, 0, ',', '.')],
+                        ['Nama', $booking->customer_name],
+                        ['WhatsApp', $booking->whatsapp_number],
+                    ],
+                ];
+            @endphp
+
+            <button
+                type="button" data-receipt="{{ json_encode($receipt) }}"
+                class="mt-6 w-full rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium py-2.5 transition"
+            >
+                Download Bukti Booking (PNG)
+            </button>
+            <p class="mt-2 text-xs text-slate-500 text-center">Simpan gambarnya di galeri, lalu tunjukkan ke operator saat datang.</p>
+
             @if (in_array($booking->status, [\App\Models\Booking::STATUS_PENDING, \App\Models\Booking::STATUS_CONFIRMED], true))
                 <div class="mt-6 pt-5 border-t border-slate-800">
                     <p class="text-sm text-slate-400">
